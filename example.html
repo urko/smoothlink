@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<title>Smoothlink example</title>
+		<link href="example.css" rel="stylesheet" media="screen" />
+		<script id="smoothlink" type="text/javascript" src="src/smoothlink.js"></script>
+	</head>
+	<body>
+		<!--Device info-->
+		<div id="devInfo" class="info">
+			<p>
+				Device id:
+			</p>
+			<p id="devId"></p>
+		</div>
+		<!--Login prompt-->
+		<div id="login" class="login">
+			<input type="text" id="myUser" placeholder="user" />
+			<input type="password" id="myPass" placeholder="password" />
+			<input type="submit" id="submit" value="Sign in" />
+		</div>
+		<!--Application-->
+		<script type="text/javascript" >
+			// Smoothlink environment
+			new Smoothlink(
+			// Handler for media content migration from a new user
+			function(media) {
+				// Disable login
+				document.getElementById('login').style.display = "none";
+				// Place the new media element at the bottom
+				document.childNodes[1].appendChild(media);
+			},
+			// Application example
+			function(S) {
+				// App login relies on Smoothlink
+				var app = function() {
+					// Disable login
+					document.getElementById('login').style.display = "none";
+					// Set logout button
+					var logoutButton = document.createElement('button');
+					logoutButton.type = "button";
+					logoutButton.id = "logoutButton";
+					logoutButton.innerHTML = "Log out";
+					logoutButton.addEventListener('click', function(event) {
+						S.logout();
+					}, false);
+					var infoBox = document.getElementById('devInfo');
+					infoBox.appendChild(logoutButton);
+
+					// Create media content
+					createContent();
+					// Scan new media elements in DOM and adapt them for migration
+					S.scanMediaElements();
+					// Check Smoothlink mode
+					var auto = S.isAuto();
+					if(auto) {
+						// Disable automode
+						S.setAuto(false);
+					}
+					// Retrieve close devices to assign them name
+					S.getDevices(
+					// Function called when the device list is received
+					function(devices) {
+						// Set all devices as known
+						S.setKnownDevices(devices);
+						// Set a name for the first device if any
+						var devs = Object.keys(devices);
+						var tag = 0;
+						for(var dev in devices) {
+							var name = "Device" + tag++;
+							S.setDeviceName(devs[dev], name);
+							console.log("Name " + name + " assigned to device Id " + dev);
+						}
+					});
+				};
+				// User permission policy
+				S.acceptUser(
+				// A remote user wants to access the device
+				function(accept) {
+					console.log("User " + accept.userId + " on device " + accept.id + "wants to discover the device");
+					// Validate permission automatically
+					S.validateUser(accept);
+				});
+				// Logout handler
+				S.onLogout(function() {
+					// Delete logout button
+					var infoBox = document.getElementById('devInfo');
+					var logoutButton = document.getElementById('logoutButton');
+					infoBox.removeChild(logoutButton);
+					// Delete media content
+					var video = document.getElementById('myVideo');
+					if(!!video) {
+						var videoWrapper = video.parentNode;
+						videoWrapper.parentNode.removeChild(videoWrapper);
+					}
+					var audio = document.getElementById('myAudio');
+					if(!!audio) {
+						var audioWrapper = audio.parentNode;
+						audioWrapper.parentNode.removeChild(audioWrapper);
+					}
+					// Enable login
+					document.getElementById('myUser').value = "";
+					document.getElementById('myPass').value = "";
+					document.getElementById('login').style.display = "inherit";
+				});
+				
+				// Initial settings
+
+				// Network address for external resources
+				var ip = "192.168.1.37";
+
+				// Load listener for login
+				var submit = document.getElementById('submit');
+				// Validate login
+				submit.addEventListener('click', function(event) {
+					// Get user info
+					var user = document.getElementById("myUser").value;
+					var passInput = document.getElementById("myPass");
+					var pass = passInput.value;
+					// Set default user
+					if(!user) {
+						user = "user";
+						pass = "password";
+					} else if(!pass) {
+						passInput.placeholder = "Enter password";
+					}
+					// Run the app with the given user
+					S.login(user, pass, app);
+				}, false);
+				// Show device Id
+				var devId = document.getElementById('devId');
+				devId.innerHTML = S.viewId();
+
+				// Create media content for user
+				var createContent = function() {
+					// New video media element
+					var video = document.createElement('video');
+					video.id = "myVideo"
+					// Create media sources
+					var src1 = document.createElement('source');
+					var src2 = document.createElement('source');
+					var src3 = document.createElement('source');
+					var src4 = document.createElement('source');
+					// Set video media urls
+					src1.src = "http://127.0.0.1:8080/b3f427cc7547c9485bf104142ec244e6921f18bc";
+					src2.src = "http://" + ip + "/~eclipse/sintel.webm";
+					src2.type = "video/webm";
+					src3.src = "http://" + ip + "/~eclipse/sintel.m4v";
+					src3.type = "video/mp4";
+					src4.src = "http://" + ip + "/~eclipse/sintel.ogv";
+					src4.type = "video/ogv";
+					// Add media sources on video element
+					video.appendChild(src1);
+					video.appendChild(src2);
+					video.appendChild(src3);
+					video.appendChild(src4);
+					// Place element in DOM
+					document.childNodes[1].appendChild(video);
+
+					// New audio media element
+					var audio = document.createElement('audio');
+					audio.id = "myAudio"
+					// Create media sources
+					var src5 = document.createElement('source');
+					var src6 = document.createElement('source');
+					var src7 = document.createElement('source');
+					var src8 = document.createElement('source');
+					var src9 = document.createElement('source');
+					// Set audio media urls
+					src5.src = "http://127.0.0.1:8080/c0802c1dddf4ae8322a58999ad38ebe871d5687c";
+					src6.src = "http://" + ip + "/~eclipse/lodi.mp3";
+					src6.type = "audio/mpeg";
+					src7.src = "http://" + ip + "/~eclipse/lodi.ogg";
+					src7.type = "audio/ogg";
+					src8.src = "http://" + ip + "/~eclipse/lodi.mp4";
+					src9.src = "http://" + ip + "/~eclipse/lodi.webm";
+					// Add media source in video element
+					audio.appendChild(src5);
+					audio.appendChild(src6);
+					audio.appendChild(src7);
+					audio.appendChild(src8);
+					audio.appendChild(src9);
+					// Place element in DOM
+					document.childNodes[1].appendChild(audio);
+				}
+			});
+		</script>
+	</body>
+</html>
