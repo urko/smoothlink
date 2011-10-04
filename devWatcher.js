@@ -15,14 +15,17 @@ var http = require("http"), url = require("url"), path = require("path"), fs = r
 // Default port
 var port = 8081;
 
-// Example of default coordinates for device watchers
+// Device watcher IP (EDIT)
+var dwIP = "ip:port";
+
+// Example of default coordinates for device watchers (EDIT)
 var tslab1Pos = {
-	latitude : 59.404734,
-	longitude : 17.944558
+	latitude : -27.08,
+	longitude : -109.32
 };
 var tslab2Pos = {
-	latitude : 59.405062,
-	longitude : 17.943678
+	latitude : 39.915,
+	longitude : 116.397
 };
 
 // List of device watchers
@@ -50,7 +53,7 @@ process.argv.forEach(function(val, index) {
 // Check if dwList is empty
 if(Object.keys(dwList).length == 0) {
 	// Default device watchers
-	dwList["192.168.1.37:8081"] = tslab1Pos;
+	dwList[dwIP] = tslab1Pos;
 }
 
 // Web server

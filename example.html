@@ -107,9 +107,6 @@
 				
 				// Initial settings
 
-				// Network address for external resources
-				var ip = "192.168.1.37";
-
 				// Load listener for login
 				var submit = document.getElementById('submit');
 				// Validate login
@@ -134,6 +131,10 @@
 
 				// Create media content for user
 				var createContent = function() {
+					
+					// Network address for media resources (EDIT)
+					var ip = "ip";
+					
 					// New video media element
 					var video = document.createElement('video');
 					video.id = "myVideo"
@@ -142,13 +143,15 @@
 					var src2 = document.createElement('source');
 					var src3 = document.createElement('source');
 					var src4 = document.createElement('source');
-					// Set video media urls
-					src1.src = "http://127.0.0.1:8080/b3f427cc7547c9485bf104142ec244e6921f18bc";
-					src2.src = "http://" + ip + "/~eclipse/sintel.webm";
+					// Set same video stream with different codecs (EDIT)
+					// 1. Media source from the HTTP local gateway
+					src1.src = "http://ip:port/hashID";
+					// 2. External media sources
+					src2.src = "http://" + ip + "URL.webm";
 					src2.type = "video/webm";
-					src3.src = "http://" + ip + "/~eclipse/sintel.m4v";
+					src3.src = "http://" + ip + "URL.m4v";
 					src3.type = "video/mp4";
-					src4.src = "http://" + ip + "/~eclipse/sintel.ogv";
+					src4.src = "http://" + ip + "URL.ogv";
 					src4.type = "video/ogv";
 					// Add media sources on video element
 					video.appendChild(src1);
@@ -167,14 +170,16 @@
 					var src7 = document.createElement('source');
 					var src8 = document.createElement('source');
 					var src9 = document.createElement('source');
-					// Set audio media urls
-					src5.src = "http://127.0.0.1:8080/c0802c1dddf4ae8322a58999ad38ebe871d5687c";
-					src6.src = "http://" + ip + "/~eclipse/lodi.mp3";
+					// Set same audio stream with different codecs (EDIT)
+					// 1. Media source from the HTTP local gateway
+					src5.src = "http://ip:port/hashID";
+					// 2. External media sources
+					src6.src = "http://" + ip + "URL.mp3";
 					src6.type = "audio/mpeg";
-					src7.src = "http://" + ip + "/~eclipse/lodi.ogg";
+					src7.src = "http://" + ip + "URL.ogg";
 					src7.type = "audio/ogg";
-					src8.src = "http://" + ip + "/~eclipse/lodi.mp4";
-					src9.src = "http://" + ip + "/~eclipse/lodi.webm";
+					src8.src = "http://" + ip + "URL.mp4";
+					src9.src = "http://" + ip + "URL.webm";
 					// Add media source in video element
 					audio.appendChild(src5);
 					audio.appendChild(src6);
